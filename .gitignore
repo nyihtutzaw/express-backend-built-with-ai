@@ -32,3 +32,7 @@ coverage/
 *.swp
 *.swo
 .tmp/
+
+# ... existing entries ...
+*.db
+*.db-journal

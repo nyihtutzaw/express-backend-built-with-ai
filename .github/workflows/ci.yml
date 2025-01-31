@@ -26,6 +26,12 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+
       - name: Check code formatting
         run: yarn format:check
 
@@ -34,3 +40,5 @@ jobs:
 
       - name: Run tests
         run: yarn test
+        env:
+          DATABASE_URL: 'file:./test.db'

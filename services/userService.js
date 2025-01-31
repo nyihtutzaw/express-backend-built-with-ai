@@ -1,49 +1,50 @@
-const { users } = require('../dummyData.js');
+const prisma = require('../lib/prisma');
 
-const getAllUsers = () => {
-  return [...users];
+const getAllUsers = async () => {
+  return await prisma.user.findMany();
 };
 
-const getUserById = (id) => {
+const getUserById = async (id) => {
   if (!id) throw new Error('User ID is required');
-  const user = users.find((user) => user.id === parseInt(id));
+  const user = await prisma.user.findUnique({
+    where: { id: parseInt(id) },
+  });
   if (!user) throw new Error('User not found');
   return user;
 };
 
-const createUser = (userData) => {
+const createUser = async (userData) => {
   if (!userData.name || !userData.email) {
     throw new Error('Name and email are required');
   }
-
-  const newUser = {
-    id: users.length + 1,
-    name: userData.name,
-    email: userData.email,
-  };
-
-  users.push(newUser);
-  return newUser;
+  return await prisma.user.create({
+    data: userData,
+  });
 };
 
-const updateUser = (id, userData) => {
+const updateUser = async (id, userData) => {
   if (!id) throw new Error('User ID is required');
-
-  const index = users.findIndex((user) => user.id === parseInt(id));
-  if (index === -1) throw new Error('User not found');
-
-  users[index] = { ...users[index], ...userData };
-  return users[index];
+  try {
+    return await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: userData,
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('User not found');
+  }
 };
 
-const deleteUser = (id) => {
+const deleteUser = async (id) => {
   if (!id) throw new Error('User ID is required');
-
-  const index = users.findIndex((user) => user.id === parseInt(id));
-  if (index === -1) throw new Error('User not found');
-
-  const deletedUser = users.splice(index, 1)[0];
-  return deletedUser;
+  try {
+    return await prisma.user.delete({
+      where: { id: parseInt(id) },
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error('User not found');
+  }
 };
 
 module.exports = {
