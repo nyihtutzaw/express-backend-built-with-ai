@@ -15,33 +15,31 @@ describe('Users Route - GET /', () => {
     };
   });
 
-  test('should return users successfully', () => {
+  test('should return users successfully', async () => {
     // Arrange
     const mockUsers = [
       { id: 1, name: 'Test User 1', email: 'test1@example.com' },
       { id: 2, name: 'Test User 2', email: 'test2@example.com' },
     ];
-    userService.getAllUsers.mockReturnValue(mockUsers);
+    userService.getAllUsers.mockResolvedValue(mockUsers);
 
     // Act
-    const getAllUsersHandler = require('../../routes/users').getAllUsersHandler;
-    getAllUsersHandler(mockRequest, mockResponse);
+    const { getAllUsersHandler } = require('../../routes/users');
+    await getAllUsersHandler(mockRequest, mockResponse);
 
     // Assert
     expect(userService.getAllUsers).toHaveBeenCalled();
     expect(mockResponse.json).toHaveBeenCalledWith(mockUsers);
   });
 
-  test('should handle error when userService throws', () => {
+  test('should handle error when userService throws', async () => {
     // Arrange
     const errorMessage = 'Database error';
-    userService.getAllUsers.mockImplementation(() => {
-      throw new Error(errorMessage);
-    });
+    userService.getAllUsers.mockRejectedValue(new Error(errorMessage));
 
     // Act
-    const getAllUsersHandler = require('../../routes/users').getAllUsersHandler;
-    getAllUsersHandler(mockRequest, mockResponse);
+    const { getAllUsersHandler } = require('../../routes/users');
+    await getAllUsersHandler(mockRequest, mockResponse);
 
     // Assert
     expect(userService.getAllUsers).toHaveBeenCalled();
@@ -51,13 +49,13 @@ describe('Users Route - GET /', () => {
     });
   });
 
-  test('should return empty array when no users exist', () => {
+  test('should return empty array when no users exist', async () => {
     // Arrange
-    userService.getAllUsers.mockReturnValue([]);
+    userService.getAllUsers.mockResolvedValue([]);
 
     // Act
-    const getAllUsersHandler = require('../../routes/users').getAllUsersHandler;
-    getAllUsersHandler(mockRequest, mockResponse);
+    const { getAllUsersHandler } = require('../../routes/users');
+    await getAllUsersHandler(mockRequest, mockResponse);
 
     // Assert
     expect(userService.getAllUsers).toHaveBeenCalled();

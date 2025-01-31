@@ -1,64 +1,83 @@
 const { getAllUsers } = require('../../services/userService');
-const { users } = require('../../dummyData');
 
-// Mock the dummyData module
-jest.mock('../../dummyData', () => ({
-  users: [
-    { id: 1, name: 'Test User 1', email: 'test1@example.com' },
-    { id: 2, name: 'Test User 2', email: 'test2@example.com' },
-  ],
+// Mock prisma client
+jest.mock('../../lib/prisma', () => ({
+  user: {
+    findMany: jest.fn(),
+  },
 }));
 
+const prisma = require('../../lib/prisma');
+
 describe('UserService - getAllUsers', () => {
-  test('should return all users', () => {
-    // Arrange & Act
-    const result = getAllUsers();
+  const mockUsers = [
+    {
+      id: 1,
+      name: 'Test User 1',
+      email: 'test1@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: 2,
+      name: 'Test User 2',
+      email: 'test2@example.com',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
+
+  beforeEach(() => {
+    prisma.user.findMany.mockReset();
+  });
+
+  test('should return all users', async () => {
+    // Arrange
+    prisma.user.findMany.mockResolvedValue(mockUsers);
+
+    // Act
+    const result = await getAllUsers();
 
     // Assert
     expect(result).toBeDefined();
     expect(Array.isArray(result)).toBe(true);
-    expect(result).toEqual(users);
+    expect(result).toEqual(mockUsers);
+    expect(prisma.user.findMany).toHaveBeenCalled();
   });
 
-  test('should return empty array when no users exist', () => {
+  test('should return empty array when no users exist', async () => {
     // Arrange
-    jest.resetModules();
-    jest.mock('../../dummyData', () => ({
-      users: [],
-    }));
-    const { getAllUsers } = require('../../services/userService');
+    prisma.user.findMany.mockResolvedValue([]);
 
     // Act
-    const result = getAllUsers();
+    const result = await getAllUsers();
 
     // Assert
     expect(result).toBeDefined();
     expect(Array.isArray(result)).toBe(true);
     expect(result).toHaveLength(0);
+    expect(prisma.user.findMany).toHaveBeenCalled();
   });
 
-  test('should return a copy of users array, not the reference', () => {
+  test('should contain users with required properties', async () => {
     // Arrange
-    const initialUsers = [...users];
+    prisma.user.findMany.mockResolvedValue(mockUsers);
 
     // Act
-    const result = getAllUsers();
-    result.push({ id: 999, name: 'New User', email: 'new@example.com' });
+    const result = await getAllUsers();
 
     // Assert
-    expect(users).toEqual(initialUsers);
-    expect(users.length).toBe(initialUsers.length);
-  });
-
-  test('should contain users with required properties', () => {
-    // Act
-    const result = getAllUsers();
-
-    // Assert
+    expect(Array.isArray(result)).toBe(true);
     result.forEach((user) => {
       expect(user).toHaveProperty('id');
       expect(user).toHaveProperty('name');
       expect(user).toHaveProperty('email');
+      expect(user).toHaveProperty('createdAt');
+      expect(user).toHaveProperty('updatedAt');
     });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });
