@@ -4,7 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const compression = require('compression');
-const {router:userRoutes } = require('./routes/users');
+const { router: userRoutes } = require('./routes/users');
 
 const app = express();
 

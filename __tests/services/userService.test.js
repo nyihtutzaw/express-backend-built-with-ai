@@ -5,8 +5,8 @@ const { users } = require('../../dummyData');
 jest.mock('../../dummyData', () => ({
   users: [
     { id: 1, name: 'Test User 1', email: 'test1@example.com' },
-    { id: 2, name: 'Test User 2', email: 'test2@example.com' }
-  ]
+    { id: 2, name: 'Test User 2', email: 'test2@example.com' },
+  ],
 }));
 
 describe('UserService - getAllUsers', () => {
@@ -24,7 +24,7 @@ describe('UserService - getAllUsers', () => {
     // Arrange
     jest.resetModules();
     jest.mock('../../dummyData', () => ({
-      users: []
+      users: [],
     }));
     const { getAllUsers } = require('../../services/userService');
 
@@ -55,7 +55,7 @@ describe('UserService - getAllUsers', () => {
     const result = getAllUsers();
 
     // Assert
-    result.forEach(user => {
+    result.forEach((user) => {
       expect(user).toHaveProperty('id');
       expect(user).toHaveProperty('name');
       expect(user).toHaveProperty('email');

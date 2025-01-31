@@ -11,7 +11,7 @@ describe('Users Route - GET /', () => {
     mockRequest = {};
     mockResponse = {
       json: jest.fn(),
-      status: jest.fn().mockReturnThis()
+      status: jest.fn().mockReturnThis(),
     };
   });
 
@@ -19,7 +19,7 @@ describe('Users Route - GET /', () => {
     // Arrange
     const mockUsers = [
       { id: 1, name: 'Test User 1', email: 'test1@example.com' },
-      { id: 2, name: 'Test User 2', email: 'test2@example.com' }
+      { id: 2, name: 'Test User 2', email: 'test2@example.com' },
     ];
     userService.getAllUsers.mockReturnValue(mockUsers);
 
@@ -46,8 +46,8 @@ describe('Users Route - GET /', () => {
     // Assert
     expect(userService.getAllUsers).toHaveBeenCalled();
     expect(mockResponse.status).toHaveBeenCalledWith(500);
-    expect(mockResponse.json).toHaveBeenCalledWith({ 
-      message: errorMessage 
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      message: errorMessage,
     });
   });
 

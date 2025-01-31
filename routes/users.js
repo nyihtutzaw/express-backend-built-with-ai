@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const userService = require('../services/userService');
 
-
-
 // Get user by ID
 router.get('/:id', (req, res) => {
   try {
@@ -55,8 +53,7 @@ const getAllUsersHandler = (req, res) => {
 
 router.get('/', getAllUsersHandler);
 
-
 module.exports = {
   router,
-  getAllUsersHandler // Export the handler for testing
+  getAllUsersHandler, // Export the handler for testing
 };
